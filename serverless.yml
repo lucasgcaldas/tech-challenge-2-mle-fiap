@@ -1,0 +1,50 @@
+service: pipeline-bovespa
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-1
+  memorySize: 128
+  timeout: 30
+
+  environment:
+    AWS_ACCOUNT_ID: ${env:AWS_ACCOUNT_ID} 
+
+  iam:
+    role:
+      arn: arn:aws:iam::${self:provider.environment.AWS_ACCOUNT_ID}:role/LabRole
+
+functions:
+  scrapB3:
+    handler: scripts/scrap_b3.scrap_b3
+    events:
+      - schedule: cron(0 22 * * ? *) # Executa diariamente às 22h
+  triggerGlue:
+    handler: scripts/lambda_trigger.lambda_handler
+    events:
+      - s3:
+          bucket: raw-bovespa-bucket
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: raw/
+
+resources:
+  Resources:
+    RawS3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: raw-bovespa-bucket
+    RefinedS3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: refined-bovespa-bucket
+    GlueJob:
+      Type: AWS::Glue::Job
+      Properties:
+        Name: Job-Glue-Bovespa
+        Role: arn:aws:iam::${self:provider.environment.AWS_ACCOUNT_ID}:role/LabRole
+        Command:
+          Name: glueetl
+          ScriptLocation: s3://path-to-script/glue_script.py
+          PythonVersion: 3
