@@ -28,9 +28,6 @@ functions:
           rules:
             - prefix: raw/
 
-plugins:
-  - serverless-python-requirements
-
 resources:
   Resources:
     RawS3Bucket:
