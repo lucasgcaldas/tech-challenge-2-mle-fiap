@@ -1,4 +1,4 @@
-service: pipeline-bovespa
+service: pipeline-bovespa-fiap
 frameworkVersion: '3'
 
 provider:
