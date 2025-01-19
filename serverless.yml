@@ -23,31 +23,13 @@ functions:
     handler: scripts/lambda_trigger.lambda_handler
     events:
       - s3:
-          bucket: raw-bovespa-s3
+          bucket: bucketfiapgrupo129
           event: s3:ObjectCreated:*
           rules:
             - prefix: raw/
 
 resources:
   Resources:
-    RefinedS3:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: refined-bovespa-s3
-        AccessControl: Private
-        VersioningConfiguration:
-          Status: Enabled
-      DeletionPolicy: Retain
-      UpdateReplacePolicy: Retain
-    GlueScriptsS3:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: glue-scripts-s3
-        AccessControl: Private
-        VersioningConfiguration:
-          Status: Enabled
-      DeletionPolicy: Retain
-      UpdateReplacePolicy: Retain
     GlueJob:
       Type: AWS::Glue::Job
       Properties:
@@ -55,5 +37,5 @@ resources:
         Role: arn:aws:iam::${self:provider.environment.AWS_ACCOUNT_ID}:role/LabRole
         Command:
           Name: glueetl
-          ScriptLocation: s3://glue-scripts-bucket/scripts/glue_script.py
+          ScriptLocation: s3://bucketfiapgrupo129/scripts/glue_script.py
           PythonVersion: 3

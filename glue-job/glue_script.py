@@ -12,8 +12,8 @@ job = Job(glueContext)
 job.init(sys.argv[1], sys.argv)
 
 # Caminhos S3
-input_path = "s3://raw-bovespa-s3/raw/"  # Dados brutos
-output_path = "s3://refined-bovespa-s3/refined/"  # Dados refinados
+input_path = "s3://bucketfiapgrupo129/data/raw/"  # Dados brutos
+output_path = "s3://bucketfiapgrupo129/data/refined/"  # Dados refinados
 
 # Carregar os dados do S3
 datasource0 = glueContext.create_dynamic_frame.from_options(
