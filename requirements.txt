@@ -2,3 +2,7 @@ boto3
 pandas
 requests
 beautifulsoup4
+pyarrow
+fastparquet
+playwright
+lxml
