@@ -39,6 +39,15 @@ resources:
           Status: Enabled
       DeletionPolicy: Retain
       UpdateReplacePolicy: Retain
+    GlueScriptsS3:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: glue-scripts-s3
+        AccessControl: Private
+        VersioningConfiguration:
+          Status: Enabled
+      DeletionPolicy: Retain
+      UpdateReplacePolicy: Retain
     GlueJob:
       Type: AWS::Glue::Job
       Properties:
