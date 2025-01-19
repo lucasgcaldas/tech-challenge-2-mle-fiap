@@ -23,26 +23,26 @@ functions:
     handler: scripts/lambda_trigger.lambda_handler
     events:
       - s3:
-          bucket: raw-bovespa-bucket
+          bucket: raw-bovespa-s3
           event: s3:ObjectCreated:*
           rules:
             - prefix: raw/
 
 resources:
   Resources:
-    RawS3Bucket:
+    RawS3:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: raw-bovespa-bucket
+        BucketName: raw-bovespa-s3
         AccessControl: Private
         VersioningConfiguration:
           Status: Enabled
       DeletionPolicy: Retain
       UpdateReplacePolicy: Retain
-    RefinedS3Bucket:
+    RefinedS3:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: refined-bovespa-bucket
+        BucketName: refined-bovespa-s3
         AccessControl: Private
         VersioningConfiguration:
           Status: Enabled
