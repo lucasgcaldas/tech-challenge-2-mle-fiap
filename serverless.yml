@@ -30,24 +30,6 @@ functions:
 
 resources:
   Resources:
-    RawS3:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: raw-bovespa-s3
-        AccessControl: Private
-        VersioningConfiguration:
-          Status: Enabled
-      DeletionPolicy: Retain
-      UpdateReplacePolicy: Retain
-    RefinedS3:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: refined-bovespa-s3
-        AccessControl: Private
-        VersioningConfiguration:
-          Status: Enabled
-      DeletionPolicy: Retain
-      UpdateReplacePolicy: Retain
     GlueJob:
       Type: AWS::Glue::Job
       Properties:
