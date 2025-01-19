@@ -23,7 +23,7 @@ functions:
     handler: scripts/lambda_trigger.lambda_handler
     events:
       - s3:
-          bucket: bucketfiapgrupo129
+          bucket: bucketfiapgrupo129-tech2
           event: s3:ObjectCreated:*
           rules:
             - prefix: raw/
@@ -37,5 +37,5 @@ resources:
         Role: arn:aws:iam::${self:provider.environment.AWS_ACCOUNT_ID}:role/LabRole
         Command:
           Name: glueetl
-          ScriptLocation: s3://bucketfiapgrupo129/scripts/glue_script.py
+          ScriptLocation: s3://bucketfiapgrupo129-tech2/scripts/glue_script.py
           PythonVersion: 3

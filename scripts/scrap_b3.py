@@ -6,7 +6,7 @@ from io import StringIO
 
 
 s3 = boto3.client('s3')
-RAW_BUCKET_NAME = "bucketfiapgrupo129"
+RAW_BUCKET_NAME = "bucketfiapgrupo129-tech2"
 
 def scrap_b3(event, context):
     url = "https://sistemaswebb3-listados.b3.com.br/indexPage/day/IBOV?language=pt-br"
