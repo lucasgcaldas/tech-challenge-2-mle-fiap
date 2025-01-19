@@ -36,7 +36,7 @@ resources:
         BucketName: raw-bovespa-bucket
         AccessControl: Private
         VersioningConfiguration:
-        Status: Enabled
+          Status: Enabled
       DeletionPolicy: Retain
       UpdateReplacePolicy: Retain
     RefinedS3Bucket:
@@ -45,7 +45,7 @@ resources:
         BucketName: refined-bovespa-bucket
         AccessControl: Private
         VersioningConfiguration:
-        Status: Enabled
+          Status: Enabled
       DeletionPolicy: Retain
       UpdateReplacePolicy: Retain
     GlueJob:
