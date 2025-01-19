@@ -34,10 +34,20 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: raw-bovespa-bucket
+        AccessControl: Private
+        VersioningConfiguration:
+        Status: Enabled
+      DeletionPolicy: Retain
+      UpdateReplacePolicy: Retain
     RefinedS3Bucket:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: refined-bovespa-bucket
+        AccessControl: Private
+        VersioningConfiguration:
+        Status: Enabled
+      DeletionPolicy: Retain
+      UpdateReplacePolicy: Retain
     GlueJob:
       Type: AWS::Glue::Job
       Properties:
@@ -45,5 +55,5 @@ resources:
         Role: arn:aws:iam::${self:provider.environment.AWS_ACCOUNT_ID}:role/LabRole
         Command:
           Name: glueetl
-          ScriptLocation: s3://path-to-script/glue_script.py
+          ScriptLocation: s3://glue-scripts-bucket/scripts/glue_script.py
           PythonVersion: 3
