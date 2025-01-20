@@ -31,6 +31,12 @@ functions:
 plugins:
   - serverless-python-requirements
 
+custom:
+  pythonRequirements:
+    slim: true
+    layer: true
+    dockerizePip: true 
+
 package:
   exclude:
     - node_modules/**
