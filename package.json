@@ -1,0 +1,10 @@
+{
+  "name": "pipeline-bovespa-fiap",
+  "version": "1.0.0",
+  "description": "Tech Challenge 2 - Pipeline Bovespa",
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "serverless-python-requirements": "^6.0.0"
+  }
+}

@@ -28,6 +28,9 @@ functions:
           rules:
             - prefix: raw/
 
+plugins:
+  - serverless-python-requirements
+
 resources:
   Resources:
     GlueJob:
