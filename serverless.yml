@@ -33,13 +33,13 @@ plugins:
 
 custom:
   pythonRequirements:
-    slim: true
-    layer: true
-    dockerizePip: true 
+    useStaticCache: false
+    useDownloadCache: false
 
 package:
-  exclude:
-    - node_modules/**
+  patterns:
+    - "!node_modules/**"
+    - "!__pycache__/**"
 
 resources:
   Resources:
