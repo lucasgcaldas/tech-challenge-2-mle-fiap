@@ -25,7 +25,7 @@ jobs:
         run: npm i
 
       - name: Install Dependencies
-        run: pip install -r requirements.txt
+        run: pip install playwright
 
       - name: Install Playwright
         run: playwright install 
