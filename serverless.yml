@@ -21,6 +21,8 @@ functions:
       - schedule: cron(0 22 * * ? *) # Executa diariamente às 22h
   triggerGlue:
     handler: scripts/lambda_trigger.lambda_handler
+    memorySize: 256  # Aumente para evitar problemas durante o teste
+    timeout: 30
     events:
       - s3:
           bucket: bucketfiapgrupo129-tech2
@@ -33,6 +35,9 @@ plugins:
 
 custom:
   pythonRequirements:
+    slim: true  # Remove arquivos desnecessários (ex.: testes, docs)
+    layer: true # Usa uma Lambda Layer para dependências grandes
+    dockerizePip: true  # Usa contêiner compatível com o ambiente do Lambda
     useStaticCache: false
     useDownloadCache: false
 
