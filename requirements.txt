@@ -4,5 +4,5 @@ requests
 beautifulsoup4
 pyarrow
 fastparquet
-# playwright
+playwright
 lxml
