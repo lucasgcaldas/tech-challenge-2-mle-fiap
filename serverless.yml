@@ -51,7 +51,7 @@ resources:
     GlueJob:
       Type: AWS::Glue::Job
       Properties:
-        Name: Job-Glue-Bovespa
+        Name: Job-Glue-Ibov
         Role: arn:aws:iam::${self:provider.environment.AWS_ACCOUNT_ID}:role/LabRole
         Command:
           Name: glueetl

@@ -4,18 +4,26 @@ from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.dynamicframe import DynamicFrame
 from awsglue.transforms import *
+from awsglue.utils import getResolvedOptions
 
-from pyspark.sql.functions import col, lit, datediff
+from pyspark.sql.functions import col, lit, date_format, current_date
 
-# Inicialização do Glue Context
+# Parse job arguments
+args = getResolvedOptions(sys.argv, ['JOB_NAME'])
+
+# Initialize Glue Context and Job
 glueContext = GlueContext(SparkContext.getOrCreate())
 spark = glueContext.spark_session
 job = Job(glueContext)
-job.init("Job-Glue-Bovespa", sys.argv)
+job.init(args['JOB_NAME'], args)
 
 # Caminhos S3
-input_path = "s3://bucketfiapgrupo129-tech2/data/raw/"  # Dados brutos
-output_path = "s3://bucketfiapgrupo129-tech2/data/refined/"  # Dados refinados
+input_path = "s3://bucketfiapgrupo129-tech2/raw/data/"  # Dados brutos
+output_path = "s3://bucketfiapgrupo129-tech2/refined/data/"  # Dados refinados
+
+# Nome do database e tabela no Glue Catalog
+database_name = "fiapgrupo129"  # Substitua pelo nome do seu banco de dados no Glue Catalog
+table_name = "fiapgrupo129_table_ibov"  # Nome da tabela
 
 # Carregar os dados do S3
 datasource0 = glueContext.create_dynamic_frame.from_options(
@@ -28,27 +36,24 @@ datasource0 = glueContext.create_dynamic_frame.from_options(
 df = datasource0.toDF()
 
 # Transformação A: Agrupamento e sumarização
-# Exemplo: Soma e contagem agrupados pelo nome da ação (coluna "Código")
 df_grouped = df.groupBy("Código").agg(
-    {"Qtde. Teórica": "sum", "Part. (%)": "avg"}
-).withColumnRenamed("sum(Qtde. Teórica)", "total_qtde_teorica") \
- .withColumnRenamed("avg(Part. (%))", "media_participacao")
+    {"`Qtde. Teórica`": "sum", "`Part. (%)`": "avg"}
+)
 
-# Transformação B: Renomear duas colunas
+# Transformação B: Renomear colunas para padrões amigáveis
 df_grouped = df_grouped.withColumnRenamed("Código", "codigo_acao") \
-                       .withColumnRenamed("total_qtde_teorica", "quantidade_teorica_total")
+                       .withColumnRenamed("sum(Qtde. Teórica)", "quantidade_teorica_total") \
+                       .withColumnRenamed("avg(Part. (%))", "media_participacao")
 
 # Transformação C: Cálculo com campos de data
-# Exemplo: Criar uma coluna fictícia "dias_ativos" para demonstração
-df_grouped = df_grouped.withColumn("dias_ativos", lit(30))  # Coloque um valor fixo ou ajuste conforme necessário
-
-# Adicionar partições por data e nome/abreviação da ação
-# Assumimos que existe uma coluna de data "data_particao" ou usamos a data atual
-from pyspark.sql.functions import current_date
-df_grouped = df_grouped.withColumn("data_particao", current_date())  # Data atual como partição
+df_grouped = df_grouped.withColumn("dias_ativos", lit(30)) \
+                       .withColumn("data_particao", date_format(current_date(), "yyyy-MM-dd"))
 
 # Converter de volta para DynamicFrame
 dynamic_frame_transformed = DynamicFrame.fromDF(df_grouped, glueContext, "transformed")
+
+# Verificar as colunas antes de salvar
+print("Esquema do DynamicFrame:", dynamic_frame_transformed.schema())
 
 # Salvar os dados refinados no S3 particionados
 glueContext.write_dynamic_frame.from_options(
@@ -56,17 +61,19 @@ glueContext.write_dynamic_frame.from_options(
     connection_type="s3",
     connection_options={
         "path": output_path,
-        "partitionKeys": ["data_particao", "codigo_acao"]  # Partições: data e nome/abreviação da ação
+        "partitionKeys": ["data_particao"]  # Apenas a partição data_particao
     },
-    format="parquet"
+    format="parquet",
+    format_options={"compression": "snappy"}
 )
 
-# Catalogar os dados no Glue Data Catalog
+# Registrar os dados no Glue Data Catalog
 glueContext.write_dynamic_frame.from_catalog(
     frame=dynamic_frame_transformed,
-    database="default",  # Substitua pelo nome do seu database no Glue Catalog
-    table_name="refined_bovespa",  # Substitua pelo nome da tabela no Glue Catalog
-    transformation_ctx="datasink"
+    database=database_name,
+    table_name=table_name
 )
+
+print(f"Dados catalogados no Glue Data Catalog no banco de dados '{database_name}', tabela '{table_name}'")
 
 job.commit()
